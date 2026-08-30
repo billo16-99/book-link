@@ -31,6 +31,7 @@ describe('links', () => {
     const updated = await updateLink(created.id, { title: 'New', status: 'saved' })
     expect(updated).toMatchObject({ id: created.id, title: 'New', status: 'saved' })
     expect(updated.createdAt).toBe(created.createdAt)
+    expect((await getLink(created.id)).title).toBe('New')
   })
 
   it('updateLink returns null for unknown id', async () => {
@@ -48,7 +49,6 @@ describe('links', () => {
       throw new DOMException('full', 'QuotaExceededError')
     })
     await expect(addLink({ url: 'https://a.com' })).rejects.toThrow('storage-unavailable')
-    Storage.prototype.setItem.mockRestore()
   })
 })
 
@@ -57,6 +57,11 @@ describe('categories', () => {
     const cats = await getCategories()
     expect(cats.map((c) => c.name)).toEqual(SEED_CATEGORIES.map((c) => c.name))
     expect(cats[0]).toMatchObject({ id: 'read-later', name: 'Read Later' })
+  })
+
+  it('rejects empty names', async () => {
+    await getCategories()
+    await expect(addCategory('   ')).rejects.toThrow('category-name-required')
   })
 
   it('addCategory dedupes case-insensitively', async () => {

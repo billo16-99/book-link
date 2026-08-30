@@ -32,7 +32,8 @@ function writeJson(key, value) {
 }
 
 export async function getLinks() {
-  return readJson(LINKS_KEY) ?? []
+  const data = readJson(LINKS_KEY)
+  return Array.isArray(data) ? data : []
 }
 
 export async function getLink(id) {
@@ -75,9 +76,10 @@ export async function deleteLink(id) {
 
 export async function getCategories() {
   const existing = readJson(CATEGORIES_KEY)
-  if (existing) return existing
-  writeJson(CATEGORIES_KEY, SEED_CATEGORIES)
-  return SEED_CATEGORIES
+  if (Array.isArray(existing)) return existing
+  const seeds = SEED_CATEGORIES.map((c) => ({ ...c }))
+  writeJson(CATEGORIES_KEY, seeds)
+  return seeds
 }
 
 export async function addCategory(name) {
