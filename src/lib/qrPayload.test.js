@@ -39,6 +39,39 @@ describe('collectionQrPayload', () => {
     expect(decoded.items).toHaveLength(result.included)
     expect(decoded.items[0].url).toContain('59')
   })
+
+  it('keeps one link when it fits the cap', () => {
+    const longTitle = 'L'.repeat(1400)
+    const result = collectionQrPayload(
+      [link(1, { title: longTitle })],
+      'https://bl.app', '/',
+    )
+    expect(result.included).toBe(1)
+    expect(result.total).toBe(1)
+    expect(result.url.length).toBeLessThanOrEqual(2000)
+    const decoded = decodeSharedPayload(result.url.split('/s/')[1])
+    expect(decoded.items).toHaveLength(1)
+    expect(decoded.items[0].title).toBe(longTitle)
+  })
+
+  it('degrades to an empty payload when even one link exceeds the cap', () => {
+    const huge = Array.from({ length: 50 }, (_, i) =>
+      link(i, { title: 'H'.repeat(3000), url: `https://example.com/${i}` }),
+    )
+    const result = collectionQrPayload(huge, 'https://bl.app', '/')
+    expect(result.included).toBe(0)
+    expect(result.total).toBe(50)
+    const decoded = decodeSharedPayload(result.url.split('/s/')[1])
+    expect(decoded.items).toHaveLength(0)
+    expect(decoded.total).toBe(50)
+  })
+
+  it('never places / in the url payload segment', () => {
+    const result = collectionQrPayload([link(1)], 'https://bl.app', '/')
+    const payload = result.url.split('/s/')[1]
+    expect(payload).not.toMatch(/\//)
+    expect(decodeSharedPayload(payload).items).toHaveLength(1)
+  })
 })
 
 describe('decodeSharedPayload', () => {
