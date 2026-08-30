@@ -20,6 +20,28 @@ describe('normalizeUrl', () => {
     expect(normalizeUrl('not a url')).toBeNull()
     expect(normalizeUrl(null)).toBeNull()
   })
+  it('accepts http and normalizes case', () => {
+    expect(normalizeUrl('http://x.io')).toBe('http://x.io/')
+    expect(normalizeUrl('HTTPS://X.IO')).toBe('https://x.io/')
+  })
+  it('rejects other explicit schemes', () => {
+    expect(normalizeUrl('ftp://x.io')).toBeNull()
+    expect(normalizeUrl('data:text/html,hi')).toBeNull()
+  })
+  it('rejects hosts without a dot', () => {
+    expect(normalizeUrl('https://a')).toBeNull()
+  })
+  it('preserves query and fragment', () => {
+    expect(normalizeUrl('https://example.com/p?q=1#top')).toBe('https://example.com/p?q=1#top')
+  })
+  it('strips userinfo, keeping the real destination', () => {
+    expect(normalizeUrl('https://legit.com@evil.com')).toBe('https://evil.com/')
+    expect(normalizeUrl('bar.com@evil.com')).toBe('https://evil.com/')
+    expect(normalizeUrl('https://mailto:a@b.c')).toBe('https://b.c/')
+  })
+  it('supports explicit ports without a scheme', () => {
+    expect(normalizeUrl('example.com:8080')).toBe('https://example.com:8080/')
+  })
 })
 
 describe('isValidUrl', () => {
