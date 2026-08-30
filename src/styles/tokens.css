@@ -1,0 +1,32 @@
+:root {
+  --bg: #F4F4F2;
+  --surface: #FCFCFB;
+  --ink: #141414;
+  --ink-2: #45453F;
+  --ink-3: #75756E;
+  --ink-disabled: #B8B8B2;
+  --line: rgba(20, 20, 20, 0.08);
+  --line-strong: rgba(20, 20, 20, 0.18);
+  --dot-draft: var(--ink);
+  --dot-saved: #2F9E60;
+  --shadow-lift: 0 8px 24px rgba(20, 20, 20, 0.06);
+  --radius-card: 24px;
+  --radius-hero: 32px;
+  --radius-pill: 999px;
+  --radius-sheet: 28px 28px 0 0;
+  --font-ui: 'Satoshi', system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+}
+
+[data-theme='dark'] {
+  --bg: #131312;
+  --surface: #1C1C1B;
+  --ink: #F1F1EE;
+  --ink-2: #C2C2BC;
+  --ink-3: #8F8F89;
+  --ink-disabled: #55554F;
+  --line: rgba(241, 241, 238, 0.10);
+  --line-strong: rgba(241, 241, 238, 0.22);
+  --dot-saved: #3DD68C;
+  --shadow-lift: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
