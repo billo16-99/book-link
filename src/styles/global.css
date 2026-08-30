@@ -21,16 +21,18 @@ img { display: block; max-width: 100%; }
 :focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
-  border-radius: 4px;
 }
 [data-theme='dark'] :focus-visible { outline-color: var(--dot-saved); }
+.field input:focus-visible, .field select:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.nav-search input:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+[data-theme='dark'] .field input:focus-visible, [data-theme='dark'] .field select:focus-visible, [data-theme='dark'] .nav-search input:focus-visible { outline-color: var(--dot-saved); }
 
 .mono {
   font-family: var(--font-mono);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--ink-3);
+  color: var(--ink-2);
 }
 
 .pill {
@@ -50,6 +52,9 @@ img { display: block; max-width: 100%; }
   transform: translateY(-2px);
   border-color: var(--line-strong);
   box-shadow: var(--shadow-lift);
+}
+.card-hover:active {
+  transform: scale(0.98);
 }
 
 .sr-only {
@@ -71,7 +76,7 @@ img { display: block; max-width: 100%; }
 .nav-search input { background: none; border: none; outline: none; width: 100%; }
 .nav-search input::placeholder { color: var(--ink-disabled); }
 .nav-links { display: flex; gap: 4px; }
-.nav-link { padding: 6px 12px; border-radius: var(--radius-pill); color: var(--ink-3); }
+.nav-link { padding: 10px 14px; border-radius: var(--radius-pill); color: var(--ink-3); transition: transform 120ms cubic-bezier(0.32, 0.72, 0, 1); }
 .nav-link:hover { color: var(--ink); }
 .nav-link.active { background: var(--bg); color: var(--ink); }
 
@@ -81,7 +86,7 @@ img { display: block; max-width: 100%; }
   grid-template-columns: repeat(5, 1fr);
   gap: 20px 16px;
 }
-@media (max-width: 1024px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 1199px) { .grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
 
 .link-card {
@@ -132,6 +137,7 @@ img { display: block; max-width: 100%; }
   display: grid; place-items: center;
   font-size: 36px; font-weight: 300;
   color: var(--ink-3);
+  transition: transform 120ms cubic-bezier(0.32, 0.72, 0, 1), border-color 180ms, color 180ms;
 }
 .add-card:hover { border-style: solid; border-color: var(--ink-3); color: var(--ink); }
 
@@ -142,11 +148,14 @@ img { display: block; max-width: 100%; }
 .btn-pill {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 20px;
+  min-height: 44px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-pill);
   font-weight: 500;
+  transition: transform 120ms cubic-bezier(0.32, 0.72, 0, 1);
 }
+.btn-pill:active, .nav-link:active, .action-circle:active, .add-card:active { transform: scale(0.96); }
 
 /* Detail */
 .detail-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: start; }
@@ -173,7 +182,7 @@ img { display: block; max-width: 100%; }
 /* Sheet */
 .sheet-backdrop {
   position: fixed; inset: 0; z-index: 90;
-  background: rgba(20, 20, 20, 0.35);
+  background: var(--backdrop);
   backdrop-filter: blur(8px);
 }
 .sheet {
@@ -193,9 +202,8 @@ img { display: block; max-width: 100%; }
   border-radius: var(--radius-card); padding: 12px 16px; outline: none;
 }
 .field input:focus, .field select:focus { border-color: var(--line-strong); }
-.field-error { color: #C0392B; font-size: 13px; }
-[data-theme='dark'] .field-error { color: #FF7A6E; }
-.sheet-note { color: var(--ink-3); font-size: 13px; }
+.field-error { color: var(--error); font-size: 13px; }
+.sheet-note { color: var(--ink-2); font-size: 13px; }
 
 /* Collections */
 .display-header {
@@ -233,6 +241,7 @@ img { display: block; max-width: 100%; }
   border: 1px solid var(--line); border-radius: 50%;
   background: var(--surface);
   display: grid; place-items: center;
+  transition: transform 120ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 .kebab-menu {
   position: absolute; top: 64px; right: 0;
@@ -240,7 +249,7 @@ img { display: block; max-width: 100%; }
   border-radius: var(--radius-card); padding: 8px;
   display: flex; flex-direction: column; min-width: 180px;
 }
-.kebab-item { text-align: left; padding: 10px 14px; border-radius: 16px; }
+.kebab-item { text-align: left; padding: 10px 14px; border-radius: var(--radius-item); }
 .kebab-item:hover { background: var(--bg); }
 
 /* Toaster */
