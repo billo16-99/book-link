@@ -40,4 +40,11 @@ describe('fetchMetadata', () => {
     vi.stubGlobal('fetch', fetchMock)
     await expect(fetchMetadata('https://a.com')).resolves.toBeNull()
   })
+
+  it('treats non-2xx responses as failure', async () => {
+    const fetchMock = vi.fn(async () => ({ ok: false, status: 500, json: async () => ({}) }))
+    vi.stubGlobal('fetch', fetchMock)
+    await expect(fetchMetadata('https://a.com')).resolves.toBeNull()
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
 })

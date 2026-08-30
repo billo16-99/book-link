@@ -4,7 +4,6 @@ const RETRY_DELAY_MS = 300
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export async function fetchMetadata(url) {
-  let lastError = null
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const res = await fetch(`${ENDPOINT}?url=${encodeURIComponent(url)}`)
@@ -17,7 +16,6 @@ export async function fetchMetadata(url) {
         image: json.data?.image?.url || '',
       }
     } catch (error) {
-      lastError = error
       if (attempt === 0) await wait(RETRY_DELAY_MS)
     }
   }
