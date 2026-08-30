@@ -12,6 +12,7 @@ vi.mock('../storage/repository', () => ({
     updateLink: vi.fn(async (id, patch) => ({ id, ...patch })),
     deleteLink: vi.fn(async () => {}),
     getCategories: vi.fn(async () => [{ id: 'tools', name: 'Tools' }]),
+    getLink: vi.fn(async () => null),
     addCategory: vi.fn(async (name) => ({ id: 'c1', name })),
   },
 }))
@@ -62,5 +63,33 @@ describe('useStore', () => {
     await waitFor(() => expect(result.current.loading).toBe(false))
     await act(() => result.current.updateLink('a', { status: 'draft' }))
     expect(repository.updateLink).toHaveBeenCalledWith('a', { status: 'draft' })
+  })
+
+  it('retryMetadata saves fetched metadata through updateLink', async () => {
+    fetchMetadata.mockResolvedValueOnce({ title: 'New T', description: 'D2', image: 'i2' })
+    repository.getLink.mockResolvedValueOnce({
+      id: 'a', url: 'https://a.com', title: 'Old A', description: '', image: '', status: 'draft',
+    })
+    const { result } = renderHook(() => useStore(), { wrapper })
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    await act(() => result.current.retryMetadata('a'))
+    expect(repository.updateLink).toHaveBeenCalledWith('a', {
+      title: 'New T', description: 'D2', image: 'i2', status: 'saved',
+    })
+  })
+
+  it('toasts when the initial load fails', async () => {
+    repository.getLinks.mockRejectedValueOnce(new Error('boom'))
+    const handler = vi.fn()
+    window.addEventListener('booklink:toast', handler)
+    try {
+      const { result } = renderHook(() => useStore(), { wrapper })
+      await waitFor(() => expect(result.current.loading).toBe(false))
+      expect(handler).toHaveBeenCalledTimes(1)
+      expect(handler.mock.calls[0][0].detail).toBe('Could not load your links')
+      expect(result.current.links).toHaveLength(0)
+    } finally {
+      window.removeEventListener('booklink:toast', handler)
+    }
   })
 })

@@ -68,9 +68,9 @@ export function StoreProvider({ children }) {
   }, [])
 
   const retryMetadata = useCallback(async (id) => {
-    const link = await repository.getLink(id)
-    if (!link) return null
     try {
+      const link = await repository.getLink(id)
+      if (!link) return null
       const meta = await fetchMetadata(link.url)
       if (!meta) return null
       return updateLink(id, {
@@ -80,6 +80,7 @@ export function StoreProvider({ children }) {
         status: 'saved',
       })
     } catch {
+      toast('Storage unavailable — could not refresh metadata')
       return null
     }
   }, [updateLink])
