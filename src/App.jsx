@@ -8,6 +8,8 @@ import Dashboard from './routes/Dashboard'
 import LinkDetail from './routes/LinkDetail'
 import Collections from './routes/Collections'
 
+import Profile from './routes/Profile'
+
 function NotFound() {
   return (
     <div className="empty-state">
@@ -25,6 +27,7 @@ function AnimatedRoutes() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/link/:id" element={<LinkDetail />} />
         <Route path="/collections" element={<Collections />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
