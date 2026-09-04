@@ -5,6 +5,7 @@ import { StoreProvider } from './hooks/useStore'
 import NavBar from './components/NavBar'
 import Toaster from './components/Toaster'
 import Dashboard from './routes/Dashboard'
+import LinkDetail from './routes/LinkDetail'
 
 function NotFound() {
   return (
@@ -21,6 +22,7 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/link/:id" element={<LinkDetail />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
