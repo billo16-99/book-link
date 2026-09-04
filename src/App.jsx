@@ -6,6 +6,7 @@ import NavBar from './components/NavBar'
 import Toaster from './components/Toaster'
 import Dashboard from './routes/Dashboard'
 import LinkDetail from './routes/LinkDetail'
+import Collections from './routes/Collections'
 
 function NotFound() {
   return (
@@ -23,6 +24,7 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/link/:id" element={<LinkDetail />} />
+        <Route path="/collections" element={<Collections />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
