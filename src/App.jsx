@@ -1,6 +1,7 @@
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, MotionConfig } from 'framer-motion'
 import { SearchProvider } from './lib/search'
+import { StoreProvider } from './hooks/useStore'
 import NavBar from './components/NavBar'
 import Toaster from './components/Toaster'
 import Dashboard from './routes/Dashboard'
@@ -30,11 +31,13 @@ export default function App() {
   return (
     <HashRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <MotionConfig reducedMotion="user">
-        <SearchProvider>
-          <NavBar />
-          <AnimatedRoutes />
-          <Toaster />
-        </SearchProvider>
+        <StoreProvider>
+          <SearchProvider>
+            <NavBar />
+            <AnimatedRoutes />
+            <Toaster />
+          </SearchProvider>
+        </StoreProvider>
       </MotionConfig>
     </HashRouter>
   )
