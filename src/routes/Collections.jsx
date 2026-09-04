@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useStore } from '../hooks/useStore'
@@ -7,6 +8,14 @@ const EASE = [0.32, 0.72, 0, 1]
 export default function Collections() {
   const { categories, links, loading } = useStore()
   const navigate = useNavigate()
+
+  const categoryCounts = useMemo(() => {
+    const counts = {}
+    links.forEach((l) => {
+      counts[l.categoryId] = (counts[l.categoryId] || 0) + 1
+    })
+    return counts
+  }, [links])
 
   return (
     <section aria-label="Collections">
@@ -25,7 +34,7 @@ export default function Collections() {
       ) : (
         <div className="collection-row">
           {categories.map((category, i) => {
-            const count = links.filter((l) => l.categoryId === category.id).length
+            const count = categoryCounts[category.id] || 0
             return (
               <motion.button
                 key={category.id}

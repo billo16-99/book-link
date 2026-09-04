@@ -48,4 +48,11 @@ describe('Collections', () => {
     await userEvent.click(screen.getByRole('button', { name: /tools/i }))
     expect(await screen.findByText('dashboard-here')).toBeInTheDocument()
   })
+
+  it('renders skeleton cards when loading', () => {
+    state.loading = true
+    const { container } = render(<MemoryRouter><Collections /></MemoryRouter>)
+    expect(container.querySelectorAll('.card-preview')).toHaveLength(4)
+    state.loading = false
+  })
 })
