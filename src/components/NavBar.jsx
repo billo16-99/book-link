@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { MagnifyingGlass } from '@phosphor-icons/react'
+import { BookmarkSimple, MagnifyingGlass } from '@phosphor-icons/react'
 import { useSearch } from '../lib/search'
 
 export default function NavBar() {
@@ -13,7 +13,10 @@ export default function NavBar() {
       transition={{ type: 'spring', stiffness: 260, damping: 20 }}
     >
       <nav className="pill nav-pill" aria-label="Primary">
-        <Link to="/" className="nav-brand">Book Link</Link>
+        <Link to="/" className="nav-brand">
+          <BookmarkSimple size={18} weight="duotone" aria-hidden="true" />
+          Book Link
+        </Link>
         <span className="nav-divider" aria-hidden="true" />
         <label className="nav-search">
           <MagnifyingGlass size={16} weight="light" aria-hidden="true" />

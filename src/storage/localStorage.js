@@ -1,5 +1,6 @@
 const LINKS_KEY = 'booklink.links.v1'
 const CATEGORIES_KEY = 'booklink.categories.v1'
+export const PROFILE_KEY = 'booklink.profile.v1'
 
 export const SEED_CATEGORIES = [
   { id: 'read-later', name: 'Read Later' },
@@ -91,4 +92,13 @@ export async function addCategory(name) {
   const created = { id: uid(), name: clean }
   writeJson(CATEGORIES_KEY, [...cats, created])
   return created
+}
+
+export async function getProfile() {
+  const data = readJson(PROFILE_KEY)
+  return { name: data?.name ?? '' }
+}
+
+export async function saveProfile(profile) {
+  writeJson(PROFILE_KEY, { name: profile.name ?? '' })
 }

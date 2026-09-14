@@ -5,6 +5,7 @@ import { useStore } from '../hooks/useStore'
 import { domainOf } from '../lib/validate'
 import PillSelector from '../components/PillSelector'
 import StatusDot from '../components/StatusDot'
+import QrCode from '../components/QrCode'
 
 const EASE = [0.32, 0.72, 0, 1]
 
@@ -46,11 +47,18 @@ export default function LinkDetail() {
       transition={{ duration: 0.38, ease: EASE }}
       aria-label="Link detail"
     >
-      <motion.div layoutId={`preview-${link.id}`} className="hero-preview">
-        {link.image ? <img src={link.image} alt="" /> : (
-          <span className="letter-tile">{domainOf(link.url).charAt(0).toUpperCase()}</span>
-        )}
-      </motion.div>
+      <div>
+        <motion.div layoutId={`preview-${link.id}`} className="hero-preview">
+          {link.image ? <img src={link.image} alt="" /> : (
+            <span className="letter-tile">{domainOf(link.url).charAt(0).toUpperCase()}</span>
+          )}
+        </motion.div>
+
+        <div className="qr-plate detail-qr">
+          <QrCode value={link.url} size={176} />
+          <p className="mono">Scan to open this link</p>
+        </div>
+      </div>
 
       <div className="detail-side">
         <Link to="/" className="btn-pill" style={{ alignSelf: 'flex-start' }}>
@@ -71,18 +79,27 @@ export default function LinkDetail() {
         </div>
 
         <input
-            className="title-input"
-            defaultValue={link.title}
-            aria-label="Title"
-            onBlur={(e) => {
-              const v = e.target.value.trim()
-              if (v && v !== link.title) updateLink(link.id, { title: v })
-            }}
-          />
+          className="title-input"
+          defaultValue={link.title}
+          aria-label="Title"
+          onBlur={(e) => {
+            const v = e.target.value.trim()
+            if (v && v !== link.title) updateLink(link.id, { title: v })
+          }}
+        />
 
         {link.description && <p className="detail-desc">{link.description}</p>}
 
-        <p className="mono"><span>{domainOf(link.url)}</span> · Added {new Date(link.createdAt).toLocaleDateString()}</p>
+        <div className="detail-meta">
+          <p className="mono">
+            <span className="pill-domain">{domainOf(link.url)}</span>
+            <span>Added {new Date(link.createdAt).toLocaleDateString()}</span>
+            <span>· {isDraft ? 'Draft preview' : 'Saved'}</span>
+          </p>
+          <a className="detail-url" href={link.url} target="_blank" rel="noreferrer">
+            {link.url}
+          </a>
+        </div>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <a className="btn-pill" href={link.url} target="_blank" rel="noreferrer">

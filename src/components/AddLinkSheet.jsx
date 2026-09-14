@@ -96,7 +96,7 @@ export default function AddLinkSheet({ open, onClose }) {
               )}
               {error && <p className="field-error" role="alert">{error}</p>}
               <p className="sheet-note">The page preview is fetched once and cached.</p>
-              <button className="btn-pill" type="submit" disabled={saving}>
+              <button className="btn-primary" type="submit" disabled={saving}>
                 {saving ? 'Saving…' : 'Save'}
               </button>
             </form>

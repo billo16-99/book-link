@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { SearchProvider } from '../lib/search'
 import Dashboard from './Dashboard'
+import NavBar from '../components/NavBar'
 
 const mkLink = (i, over = {}) => ({
   id: `l${i}`, url: `https://ex${i}.com/a`, title: `Title ${i}`,
@@ -49,10 +50,17 @@ describe('Dashboard', () => {
 
   it('filters cards by the search query', async () => {
     state.links = [mkLink(1), mkLink(2, { title: 'Zebra guide' })]
-    setup()
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <SearchProvider>
+          <NavBar />
+          <Dashboard />
+        </SearchProvider>
+      </MemoryRouter>,
+    )
     await userEvent.type(screen.getByPlaceholderText(/search/i), 'zebra')
     await waitFor(() => {
-      expect(screen.getAllByRole('link')).toHaveLength(1)
+      expect(screen.queryByText('Title 1')).not.toBeInTheDocument()
       expect(screen.getByText('Zebra guide')).toBeInTheDocument()
     })
   })

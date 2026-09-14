@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { motion, useReducedMotion } from 'framer-motion'
-import { Plus } from '@phosphor-icons/react'
+import { useSearchParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { BookmarkSimple, Plus } from '@phosphor-icons/react'
 import { useStore } from '../hooks/useStore'
 import { useSearch } from '../lib/search'
 import LinkCard from '../components/LinkCard'
@@ -21,10 +21,8 @@ function SkeletonCard() {
 
 export default function Dashboard() {
   const { links, loading } = useStore()
-  const { query, setQuery } = useSearch()
+  const { query } = useSearch()
   const [params] = useSearchParams()
-  const navigate = useNavigate()
-  const reduced = useReducedMotion()
   const [sheetOpen, setSheetOpen] = useState(false)
 
   const catId = params.get('cat')
@@ -37,42 +35,41 @@ export default function Dashboard() {
 
   return (
     <section aria-label="Saved links">
-      <input
-        placeholder="Search links…"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        aria-label="Search links"
-        style={{ marginBottom: 16 }}
-      />
+      <div className="page-head">
+        <div>
+          <p className="mono eyebrow">Your shelf</p>
+          <h1 className="page-title">Saved links</h1>
+          <p className="mono" style={{ marginTop: 10 }}>
+            {links.length} {links.length === 1 ? 'link' : 'links'} saved
+          </p>
+        </div>
+        <button className="btn-primary" type="button" onClick={() => setSheetOpen(true)}>
+          <Plus size={16} weight="bold" /> Add link
+        </button>
+      </div>
+
       {!loading && links.length === 0 && (
         <div className="empty-state">
-          <p>Nothing saved yet.</p>
-          <p className="mono">Tap + to save your first link</p>
+          <span className="empty-icon">
+            <BookmarkSimple size={26} weight="light" aria-hidden="true" />
+          </span>
+          <h2>Nothing saved yet.</h2>
+          <p className="mono">Add your first link to build a shelf</p>
         </div>
       )}
       {!loading && links.length > 0 && visible.length === 0 && (
-        <div className="empty-state"><p>No links match "{q}".</p></div>
+        <div className="empty-state">
+          <h2>No links match "{q}".</h2>
+          <p className="mono">Try a different search</p>
+        </div>
       )}
       <div className="grid">
         {loading &&
-          Array.from({ length: 10 }, (_, i) => <SkeletonCard key={i} />)}
+          Array.from({ length: 8 }, (_, i) => <SkeletonCard key={i} />)}
         {!loading &&
           visible.map((link, i) => (
             <LinkCard key={link.id} link={link} index={i} />
           ))}
-        {!loading && (
-          <motion.button
-            type="button"
-            className="add-card"
-            onClick={() => setSheetOpen(true)}
-            aria-label="Add link"
-            animate={reduced ? {} : { scale: [1, 1.015, 1] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Plus weight="light" />
-          </motion.button>
-        )}
       </div>
       <AddLinkSheet open={sheetOpen} onClose={() => setSheetOpen(false)} />
     </section>

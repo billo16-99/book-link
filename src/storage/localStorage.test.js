@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import {
   getLinks, getLink, addLink, updateLink, deleteLink,
-  getCategories, addCategory, SEED_CATEGORIES,
+  getCategories, addCategory, getProfile, saveProfile, SEED_CATEGORIES,
 } from './localStorage'
 
 beforeEach(() => localStorage.clear())
@@ -75,5 +75,16 @@ describe('categories', () => {
     await getCategories()
     await addCategory('Recipes')
     expect((await getCategories()).some((c) => c.name === 'Recipes')).toBe(true)
+  })
+})
+
+describe('profile', () => {
+  it('starts with an empty name', async () => {
+    expect(await getProfile()).toEqual({ name: '' })
+  })
+
+  it('saves and reads the display name', async () => {
+    await saveProfile({ name: 'Ada' })
+    expect(await getProfile()).toEqual({ name: 'Ada' })
   })
 })

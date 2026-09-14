@@ -43,4 +43,10 @@ describe('LinkCard', () => {
     setup()
     expect(screen.getByRole('link')).toHaveAttribute('href', '/link/l1')
   })
+
+  it('opens a QR sheet from the card badge', async () => {
+    setup()
+    await userEvent.click(screen.getByRole('button', { name: /qr code for/i }))
+    expect(screen.getByRole('dialog', { name: /qr code/i })).toBeInTheDocument()
+  })
 })

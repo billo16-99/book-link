@@ -5,46 +5,46 @@ import Profile from './Profile'
 import { useStore } from '../hooks/useStore'
 
 vi.mock('../hooks/useStore')
-vi.mock('../components/QrCode', () => ({
-  default: ({ value }) => <img data-testid="qr" src="data:image/png;base64,F" alt="QR code" />,
-}))
 
 beforeEach(() => {
-  Object.defineProperty(navigator, 'clipboard', {
-    value: { writeText: vi.fn(async () => {}) },
-    writable: true,
-    configurable: true,
-  })
   vi.mocked(useStore).mockReturnValue({
     links: [
       { id: '1', url: 'https://a.com/1', title: 'Link 1', categoryId: null, status: 'saved', createdAt: 1 },
       { id: '2', url: 'https://b.com/2', title: 'Link 2', categoryId: null, status: 'saved', createdAt: 2 },
     ],
+    categories: [
+      { id: 'read-later', name: 'Read Later' },
+    ],
   })
 })
 
 describe('Profile', () => {
-  it('renders QR code', () => {
+  it('shows account and settings panels', () => {
     render(<Profile />)
-    expect(screen.getByTestId('qr')).toBeInTheDocument()
+    expect(screen.getByText('Account')).toBeInTheDocument()
+    expect(screen.getByText('Settings')).toBeInTheDocument()
   })
 
-  it('copies share URL to clipboard', async () => {
+  it('shows account stats', () => {
     render(<Profile />)
-    await userEvent.click(screen.getByRole('button', { name: /copy/i }))
-    expect(navigator.clipboard.writeText).toHaveBeenCalled()
+    expect(screen.getByText('2')).toBeInTheDocument()
+    expect(screen.getByText('1')).toBeInTheDocument()
   })
 
-  it('falls back to clipboard when navigator.share is absent', async () => {
+  it('switches the theme via the settings control', async () => {
     render(<Profile />)
-    await userEvent.click(screen.getByRole('button', { name: /^share$/i }))
-    expect(navigator.clipboard.writeText).toHaveBeenCalled()
-  })
-
-  it('toggles dark mode via kebab menu', async () => {
-    render(<Profile />)
-    await userEvent.click(screen.getByRole('button', { name: /more options/i }))
-    await userEvent.click(screen.getByRole('button', { name: /toggle dark mode/i }))
+    await userEvent.click(screen.getByRole('button', { name: /^dark$/i }))
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark')
+    await userEvent.click(screen.getByRole('button', { name: /^light$/i }))
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light')
+  })
+
+  it('saves the display name on blur', async () => {
+    render(<Profile />)
+    const name = screen.getByLabelText(/display name/i)
+    await userEvent.clear(name)
+    await userEvent.type(name, 'Ada')
+    await userEvent.tab()
+    expect(localStorage.getItem('booklink.profile.v1')).toContain('Ada')
   })
 })
