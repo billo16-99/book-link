@@ -103,7 +103,7 @@ img { display: block; max-width: 100%; }
 .page-title { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.05; margin-top: 8px; }
 .eyebrow { text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); }
 
-/* Home actions (quick save + tabs) */
+/* Home filter tabs */
 .home-actions {
   display: flex;
   flex-direction: column;
@@ -112,29 +112,15 @@ img { display: block; max-width: 100%; }
   padding-left: 32px;
   margin-bottom: 28px;
 }
-.qs-bar { display: flex; flex-direction: column; gap: 8px; max-width: 640px; width: 100%; }
-.qs-row { display: flex; gap: 10px; }
-.qs-row input {
-  flex: 1;
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  padding: 12px 18px;
-  outline: none;
-}
-.qs-row input:focus { border-color: var(--line-strong); }
 
 /* Dashboard grid */
 .grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 220px));
+  justify-content: center;
   gap: 32px 24px;
-  padding: 8px 4px 0 32px;
+  padding: 8px 4px 0;
 }
-@media (max-width: 1199px) { .grid { grid-template-columns: repeat(4, 1fr); } }
-@media (max-width: 900px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
 
 .link-card {
   display: flex;
