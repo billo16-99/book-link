@@ -431,16 +431,17 @@ img { display: block; max-width: 100%; }
   font-size: 14px; white-space: nowrap;
 }
 
-/* Mobile (≤640px) */
-@media (max-width: 640px) {
+/* Mobile & tablet (≤880px) */
+@media (max-width: 880px) {
   body { -webkit-tap-highlight-color: transparent; }
 
-  /* Nav: brand + search on one line, links centered below */
+  /* Nav: brand + search on the first line, links as tabs below */
   .nav-wrap { top: 10px; margin-bottom: 24px; padding: 0 16px; }
-  .nav-pill { flex-wrap: wrap; gap: 8px 12px; padding: 10px 14px; width: 100%; max-width: 460px; }
-  .nav-search { flex: 1; min-width: 90px; order: 3; }
-  .nav-links { flex: 1 1 100%; order: 10; justify-content: center; margin-top: 2px; }
-  .nav-link { padding: 9px 14px; }
+  .nav-pill { flex-wrap: wrap; gap: 8px 12px; padding: 10px 12px; width: 100%; max-width: 520px; }
+  .nav-search { flex: 1; min-width: 70px; order: 3; }
+  .nav-search input { font-size: 16px; }
+  .nav-links { flex: 1 1 100%; order: 10; margin-top: 2px; gap: 4px; }
+  .nav-link { flex: 1; display: inline-flex; align-items: center; justify-content: center; padding: 10px 4px; white-space: nowrap; }
 
   /* Symmetric gutters instead of the desktop left inset */
   .page-head { padding: 0 20px; margin-bottom: 24px; }
