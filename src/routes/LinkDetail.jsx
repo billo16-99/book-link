@@ -1,8 +1,9 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, ArrowSquareOut, ClockCounterClockwise, Trash } from '@phosphor-icons/react'
+import { ArrowLeft, ArrowSquareOut, ClockCounterClockwise, Star, Trash } from '@phosphor-icons/react'
 import { useStore } from '../hooks/useStore'
 import { domainOf } from '../lib/validate'
+import { favoriteOf, notesOf } from '../lib/linkDefaults'
 import PillSelector from '../components/PillSelector'
 import StatusDot from '../components/StatusDot'
 import QrCode from '../components/QrCode'
@@ -66,6 +67,15 @@ export default function LinkDetail() {
         </Link>
 
         <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className={`fav-toggle${favoriteOf(link) ? ' is-fav' : ''}`}
+            aria-pressed={favoriteOf(link)}
+            aria-label="Favorite"
+            onClick={() => updateLink(link.id, { favorite: !favoriteOf(link) })}
+          >
+            <Star size={17} weight={favoriteOf(link) ? 'fill' : 'regular'} aria-hidden="true" />
+          </button>
           <StatusDot
             status={link.status}
             onToggle={() => updateLink(link.id, { status: isDraft ? 'saved' : 'draft' })}
@@ -89,6 +99,18 @@ export default function LinkDetail() {
         />
 
         {link.description && <p className="detail-desc">{link.description}</p>}
+
+        <textarea
+          className="notes-field"
+          rows={3}
+          placeholder="Add a note…"
+          aria-label="Note"
+          defaultValue={notesOf(link)}
+          onBlur={(e) => {
+            const v = e.target.value.trim()
+            if (v !== notesOf(link)) updateLink(link.id, { notes: v })
+          }}
+        />
 
         <div className="detail-meta">
           <p className="mono">

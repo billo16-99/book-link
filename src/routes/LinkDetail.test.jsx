@@ -7,7 +7,8 @@ import LinkDetail from './LinkDetail'
 const link = {
   id: 'l1', url: 'https://example.com/post', title: 'Cached Title',
   description: 'Some description.', image: 'https://img/x.png',
-  categoryId: 'tools', status: 'saved', createdAt: 1700000000000,
+  categoryId: 'tools', status: 'saved', favorite: false, notes: '',
+  createdAt: 1700000000000,
 }
 
 const state = {
@@ -82,5 +83,27 @@ describe('LinkDetail', () => {
       </MemoryRouter>,
     )
     expect(screen.getByText(/this link isn't here/i)).toBeInTheDocument()
+  })
+
+  it('marks a link as a favorite from the star toggle', async () => {
+    setup()
+    await userEvent.click(screen.getByRole('button', { name: /favorite/i }))
+    expect(state.updateLink).toHaveBeenCalledWith('l1', { favorite: true })
+  })
+
+  it('shows a filled star for an already-favorited link', () => {
+    state.links = [{ ...link, favorite: true }]
+    setup()
+    expect(screen.getByRole('button', { name: /favorite/i })).toHaveAttribute('aria-pressed', 'true')
+    state.links = [link]
+  })
+
+  it('edits the notes field and saves on blur', async () => {
+    setup()
+    const note = screen.getByRole('textbox', { name: /note/i })
+    expect(note).toHaveValue('')
+    await userEvent.type(note, 'Coming back to this')
+    await userEvent.tab()
+    expect(state.updateLink).toHaveBeenCalledWith('l1', { notes: 'Coming back to this' })
   })
 })
