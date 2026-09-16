@@ -50,6 +50,8 @@ export async function addLink(data) {
     description: data.description ?? '',
     image: data.image ?? '',
     categoryId: data.categoryId ?? null,
+    favorite: data.favorite ?? false,
+    notes: data.notes ?? '',
     status: data.status ?? 'draft',
     createdAt: data.createdAt ?? Date.now(),
   }

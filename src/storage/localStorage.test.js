@@ -44,6 +44,19 @@ describe('links', () => {
     expect(await getLink(created.id)).toBeNull()
   })
 
+  it('addLink defaults favorite to false and notes to empty', async () => {
+    const created = await addLink({ url: 'https://a.com' })
+    expect(created.favorite).toBe(false)
+    expect(created.notes).toBe('')
+  })
+
+  it('addLink stores favorite and notes when provided', async () => {
+    const created = await addLink({ url: 'https://a.com', favorite: true, notes: 'hi' })
+    expect(created.favorite).toBe(true)
+    expect(created.notes).toBe('hi')
+    expect((await getLink(created.id)).notes).toBe('hi')
+  })
+
   it('throws storage-unavailable when quota exceeded', async () => {
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new DOMException('full', 'QuotaExceededError')
