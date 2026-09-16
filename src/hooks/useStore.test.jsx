@@ -58,6 +58,15 @@ describe('useStore', () => {
     }))
   })
 
+  it('addLink passes notes through to the repository', async () => {
+    const { result } = renderHook(() => useStore(), { wrapper })
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    await act(() => result.current.addLink({ url: 'https://x.com', categoryId: null, notes: 'hi' }))
+    expect(repository.addLink).toHaveBeenCalledWith(expect.objectContaining({
+      url: 'https://x.com', notes: 'hi',
+    }))
+  })
+
   it('toggleStatus flips draft/saved through repository', async () => {
     const { result } = renderHook(() => useStore(), { wrapper })
     await waitFor(() => expect(result.current.loading).toBe(false))

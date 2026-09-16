@@ -27,7 +27,7 @@ export function StoreProvider({ children }) {
     return () => { alive = false }
   }, [])
 
-  const addLink = useCallback(async ({ url, categoryId }) => {
+  const addLink = useCallback(async ({ url, categoryId, notes }) => {
     const meta = await fetchMetadata(url).catch(() => null)
     let created = null
     try {
@@ -37,6 +37,7 @@ export function StoreProvider({ children }) {
         description: meta?.description || '',
         image: meta?.image || '',
         categoryId,
+        notes: notes ?? '',
         status: meta ? 'saved' : 'draft',
       })
     } catch {
