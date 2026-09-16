@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Star } from '@phosphor-icons/react'
-import { BookmarkSimple, Plus } from '@phosphor-icons/react'
+import { BookmarkSimple, MagnifyingGlass, Plus } from '@phosphor-icons/react'
 import { useStore } from '../hooks/useStore'
 import { useSearch } from '../lib/search'
 import { favoriteOf } from '../lib/linkDefaults'
@@ -23,7 +23,7 @@ function SkeletonCard() {
 
 export default function Dashboard() {
   const { links, loading } = useStore()
-  const { query } = useSearch()
+  const { query, setQuery } = useSearch()
   const [params, setParams] = useSearchParams()
   const [sheetOpen, setSheetOpen] = useState(false)
 
@@ -68,6 +68,16 @@ export default function Dashboard() {
       </div>
 
       <div className="home-actions">
+        <label className="search-bar">
+          <MagnifyingGlass size={18} weight="light" aria-hidden="true" />
+          <span className="sr-only">Search links</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search links…"
+          />
+        </label>
         <div className="seg home-tabs" role="group" aria-label="Filter saved links">
           <button type="button" aria-pressed={tab === null} onClick={() => setTab(null)}>
             All
