@@ -12,16 +12,11 @@ const mkLink = (i, over = {}) => ({
   favorite: false, notes: '', ...over,
 })
 
-const state = { links: [], loading: false, addLink: vi.fn().mockResolvedValue({ id: 'new' }) }
+const state = { links: [], loading: false }
 
 vi.mock('../hooks/useStore', () => ({
   useStore: () => state,
-  toast: vi.fn(),
 }))
-
-beforeEach(() => {
-  state.addLink.mockReset().mockResolvedValue({ id: 'new' })
-})
 
 function setup(initialEntry = '/') {
   return render(
@@ -97,18 +92,5 @@ describe('Dashboard', () => {
     state.links = [mkLink(1)]
     setup('/?tab=stars')
     expect(screen.getByText(/no favorites yet/i)).toBeInTheDocument()
-  })
-
-  it('quick-saves a pasted URL from the bar', async () => {
-    state.links = []
-    setup('/')
-    await userEvent.type(screen.getByRole('textbox', { name: /quick save/i }), 'example.com/a')
-    await userEvent.click(screen.getByRole('button', { name: /^save$/i }))
-    await waitFor(() =>
-      expect(state.addLink).toHaveBeenCalledWith({
-        url: 'https://example.com/a',
-        categoryId: null,
-      }),
-    )
   })
 })

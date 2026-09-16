@@ -8,7 +8,6 @@ import { useSearch } from '../lib/search'
 import { favoriteOf } from '../lib/linkDefaults'
 import LinkCard from '../components/LinkCard'
 import AddLinkSheet from '../components/AddLinkSheet'
-import QuickSaveBar from '../components/QuickSaveBar'
 
 function SkeletonCard() {
   return (
@@ -69,7 +68,6 @@ export default function Dashboard() {
       </div>
 
       <div className="home-actions">
-        <QuickSaveBar />
         <div className="seg home-tabs" role="group" aria-label="Filter saved links">
           <button type="button" aria-pressed={tab === null} onClick={() => setTab(null)}>
             All
