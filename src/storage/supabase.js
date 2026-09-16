@@ -26,6 +26,8 @@ const rowToLink = (r) => ({
   description: r.description,
   image: r.image,
   categoryId: r.category_id,
+  favorite: r.favorite ?? false,
+  notes: r.notes ?? '',
   status: r.status,
   createdAt: r.created_at,
 })
@@ -37,6 +39,8 @@ const linkToRow = (l) => ({
   description: l.description ?? '',
   image: l.image ?? '',
   category_id: l.categoryId ?? null,
+  favorite: l.favorite ?? false,
+  notes: l.notes ?? '',
   status: l.status ?? 'draft',
   created_at: l.createdAt ?? Date.now(),
   owner: OWNER,
@@ -82,6 +86,8 @@ export async function updateLink(id, patch) {
   if (patch.description !== undefined) payload.description = patch.description
   if (patch.image !== undefined) payload.image = patch.image
   if (patch.categoryId !== undefined) payload.category_id = patch.categoryId
+  if (patch.favorite !== undefined) payload.favorite = patch.favorite
+  if (patch.notes !== undefined) payload.notes = patch.notes
   if (patch.status !== undefined) payload.status = patch.status
 
   const { data: updated, error } = await db()

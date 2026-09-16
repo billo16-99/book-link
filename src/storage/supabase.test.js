@@ -60,7 +60,7 @@ beforeEach(() => {
 
 const snakeRow = {
   id: 'a', url: 'https://x.com', title: 'T', description: '', image: '',
-  category_id: null, status: 'saved', created_at: 5, owner: 'owner',
+  category_id: null, favorite: false, notes: '', status: 'saved', created_at: 5, owner: 'owner',
 }
 
 describe('supabase adapter', () => {
@@ -69,7 +69,7 @@ describe('supabase adapter', () => {
     const links = await supabase.getLinks()
     expect(links[0]).toEqual({
       id: 'a', url: 'https://x.com', title: 'T', description: '', image: '',
-      categoryId: null, status: 'saved', createdAt: 5,
+      categoryId: null, favorite: false, notes: '', status: 'saved', createdAt: 5,
     })
   })
 
@@ -79,6 +79,18 @@ describe('supabase adapter', () => {
     expect(calls.inserts[0].row).toMatchObject({
       url: 'https://x.com', title: 'A', category_id: null, status: 'draft', created_at: 7, owner: 'owner',
     })
+  })
+
+  it('writes favorite and notes in the insert row', async () => {
+    setTable('links', [], { ...snakeRow })
+    await supabase.addLink({ url: 'https://x.com', favorite: true, notes: 'note', categoryId: null })
+    expect(calls.inserts[0].row).toMatchObject({ favorite: true, notes: 'note' })
+  })
+
+  it('maps partial favorite and notes updates to the row', async () => {
+    setTable('links', [], { ...snakeRow })
+    await supabase.updateLink('a', { favorite: true, notes: 'n' })
+    expect(calls.updates[0].payload).toEqual({ favorite: true, notes: 'n' })
   })
 
   it('maps partial updates to snake_case', async () => {
