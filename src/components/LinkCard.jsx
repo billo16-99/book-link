@@ -1,14 +1,23 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { QrCode as QrCodeIcon } from '@phosphor-icons/react'
+import { QrCode as QrCodeIcon, Star } from '@phosphor-icons/react'
 import { domainOf } from '../lib/validate'
+import { favoriteOf } from '../lib/linkDefaults'
+import { useStore } from '../hooks/useStore'
 import { ease, springLayout } from '../lib/motion'
 import LinkQrSheet from './LinkQrSheet'
 
 export default function LinkCard({ link, index = 0 }) {
+  const { updateLink } = useStore()
   const [qrOpen, setQrOpen] = useState(false)
   const domain = domainOf(link.url)
+  const starred = favoriteOf(link)
+
+  function toggleStar() {
+    updateLink(link.id, { favorite: !starred })
+  }
+
   return (
     <>
       <motion.div
@@ -34,6 +43,20 @@ export default function LinkCard({ link, index = 0 }) {
               <span className="pill-domain mono">{domain}</span>
             </span>
           </Link>
+          <motion.button
+            type="button"
+            className={`card-fav${starred ? ' is-fav' : ''}`}
+            aria-label={`${starred ? 'Unfavorite' : 'Favorite'} ${link.title || domain}`}
+            aria-pressed={starred}
+            onClick={toggleStar}
+            whileTap={{ scale: 0.9 }}
+          >
+            {starred ? (
+              <Star size={15} weight="fill" aria-hidden="true" />
+            ) : (
+              <Star size={15} weight="regular" aria-hidden="true" />
+            )}
+          </motion.button>
           <motion.button
             type="button"
             className="card-qr"
