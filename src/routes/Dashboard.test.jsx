@@ -8,14 +8,20 @@ import NavBar from '../components/NavBar'
 
 const mkLink = (i, over = {}) => ({
   id: `l${i}`, url: `https://ex${i}.com/a`, title: `Title ${i}`,
-  image: '', categoryId: null, status: 'saved', createdAt: i, ...over,
+  image: '', categoryId: null, status: 'saved', createdAt: i,
+  favorite: false, notes: '', ...over,
 })
 
-const state = { links: [], loading: false }
+const state = { links: [], loading: false, addLink: vi.fn().mockResolvedValue({ id: 'new' }) }
 
 vi.mock('../hooks/useStore', () => ({
   useStore: () => state,
+  toast: vi.fn(),
 }))
+
+beforeEach(() => {
+  state.addLink.mockReset().mockResolvedValue({ id: 'new' })
+})
 
 function setup(initialEntry = '/') {
   return render(
@@ -69,5 +75,40 @@ describe('Dashboard', () => {
     state.links = [mkLink(1), mkLink(2, { categoryId: 'tools' })]
     setup('/?cat=tools')
     expect(screen.getAllByRole('link')).toHaveLength(1)
+  })
+
+  it('filters to favorites via ?tab=stars', () => {
+    state.links = [mkLink(1), mkLink(2, { favorite: true })]
+    setup('/?tab=stars')
+    expect(screen.getAllByRole('link')).toHaveLength(1)
+    expect(screen.queryByText('Title 1')).not.toBeInTheDocument()
+    expect(screen.getByText('Title 2')).toBeInTheDocument()
+  })
+
+  it('sorts newest first on ?tab=recent', () => {
+    state.links = [mkLink(1), mkLink(2, { createdAt: 10 })]
+    const { container } = setup('/?tab=recent')
+    const titles = container.querySelectorAll('.pill-title')
+    expect(titles[0].textContent).toBe('Title 2')
+    expect(titles[1].textContent).toBe('Title 1')
+  })
+
+  it('shows a favorites empty state when no link is starred', () => {
+    state.links = [mkLink(1)]
+    setup('/?tab=stars')
+    expect(screen.getByText(/no favorites yet/i)).toBeInTheDocument()
+  })
+
+  it('quick-saves a pasted URL from the bar', async () => {
+    state.links = []
+    setup('/')
+    await userEvent.type(screen.getByRole('textbox', { name: /quick save/i }), 'example.com/a')
+    await userEvent.click(screen.getByRole('button', { name: /^save$/i }))
+    await waitFor(() =>
+      expect(state.addLink).toHaveBeenCalledWith({
+        url: 'https://example.com/a',
+        categoryId: null,
+      }),
+    )
   })
 })

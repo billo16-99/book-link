@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Star } from '@phosphor-icons/react'
 import { BookmarkSimple, Plus } from '@phosphor-icons/react'
 import { useStore } from '../hooks/useStore'
 import { useSearch } from '../lib/search'
+import { favoriteOf } from '../lib/linkDefaults'
 import LinkCard from '../components/LinkCard'
 import AddLinkSheet from '../components/AddLinkSheet'
+import QuickSaveBar from '../components/QuickSaveBar'
 
 function SkeletonCard() {
   return (
@@ -22,16 +25,33 @@ function SkeletonCard() {
 export default function Dashboard() {
   const { links, loading } = useStore()
   const { query } = useSearch()
-  const [params] = useSearchParams()
+  const [params, setParams] = useSearchParams()
   const [sheetOpen, setSheetOpen] = useState(false)
 
   const catId = params.get('cat')
+  const tab = params.get('tab') === 'recent' || params.get('tab') === 'stars' ? params.get('tab') : null
   const q = query.trim().toLowerCase()
-  const visible = links.filter((l) => {
+  const base = links.filter((l) => {
     if (catId && l.categoryId !== catId) return false
     if (!q) return true
     return `${l.title} ${l.url}`.toLowerCase().includes(q)
   })
+  const visible = tab === 'recent'
+    ? [...base].sort((a, b) => b.createdAt - a.createdAt)
+    : tab === 'stars'
+      ? base.filter((l) => favoriteOf(l))
+      : base
+
+  function setTab(next) {
+    const nextParams = new URLSearchParams(params)
+    if (next) nextParams.set('tab', next)
+    else nextParams.delete('tab')
+    setParams(nextParams, { replace: true })
+  }
+
+  const showNothingSaved = !loading && links.length === 0 && tab !== 'stars'
+  const showNoMatches = !loading && links.length > 0 && visible.length === 0 && tab !== 'stars'
+  const showNoFavorites = !loading && tab === 'stars' && visible.length === 0
 
   return (
     <section aria-label="Saved links">
@@ -48,7 +68,22 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {!loading && links.length === 0 && (
+      <div className="home-actions">
+        <QuickSaveBar />
+        <div className="seg home-tabs" role="group" aria-label="Filter saved links">
+          <button type="button" aria-pressed={tab === null} onClick={() => setTab(null)}>
+            All
+          </button>
+          <button type="button" aria-pressed={tab === 'recent'} onClick={() => setTab('recent')}>
+            Recent
+          </button>
+          <button type="button" aria-pressed={tab === 'stars'} onClick={() => setTab('stars')}>
+            Favorites
+          </button>
+        </div>
+      </div>
+
+      {showNothingSaved && (
         <div className="empty-state">
           <span className="empty-icon">
             <BookmarkSimple size={26} weight="light" aria-hidden="true" />
@@ -57,10 +92,19 @@ export default function Dashboard() {
           <p className="mono">Add your first link to build a shelf</p>
         </div>
       )}
-      {!loading && links.length > 0 && visible.length === 0 && (
+      {showNoMatches && (
         <div className="empty-state">
           <h2>No links match "{q}".</h2>
           <p className="mono">Try a different search</p>
+        </div>
+      )}
+      {showNoFavorites && (
+        <div className="empty-state">
+          <span className="empty-icon">
+            <Star size={26} weight="light" aria-hidden="true" />
+          </span>
+          <h2>No favorites yet.</h2>
+          <p className="mono">Tap the ★ on a card to pin it here</p>
         </div>
       )}
       <div className="grid">
