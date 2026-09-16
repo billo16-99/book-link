@@ -20,6 +20,8 @@ create table if not exists links (
   description text not null default '',
   image       text not null default '',
   category_id uuid references categories (id) on delete set null,
+  favorite    boolean not null default false,
+  notes       text not null default '',
   status      text not null default 'draft' check (status in ('draft', 'saved')),
   created_at  bigint not null default 0,
   owner       text not null default 'owner'
