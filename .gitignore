@@ -3,6 +3,7 @@ dist
 .DS_Store
 .playwright-mcp
 vite-*.log
+.vercel
 .env
 .env.*
 !.env.example
