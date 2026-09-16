@@ -12,13 +12,14 @@ export default function AddLinkSheet({ open, onClose }) {
   const [urlInput, setUrlInput] = useState('')
   const [categoryId, setCategoryId] = useState('')
   const [newName, setNewName] = useState('')
+  const [notes, setNotes] = useState('')
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
   const inputRef = useRef(null)
 
   useEffect(() => {
     if (open) {
-      setUrlInput(''); setCategoryId(''); setNewName(''); setError(''); setSaving(false)
+      setUrlInput(''); setCategoryId(''); setNewName(''); setNotes(''); setError(''); setSaving(false)
       setTimeout(() => inputRef.current?.focus(), 50)
     }
   }, [open])
@@ -43,7 +44,7 @@ export default function AddLinkSheet({ open, onClose }) {
       const created = await addCategory(newName.trim())
       finalCategoryId = created?.id ?? null
     }
-    const created = await addLink({ url: normalizeUrl(urlInput), categoryId: finalCategoryId })
+    const created = await addLink({ url: normalizeUrl(urlInput), categoryId: finalCategoryId, notes: notes.trim() })
     setSaving(false)
     if (created) onClose()
     else setError('Could not save — check your connection or storage.')
@@ -94,6 +95,15 @@ export default function AddLinkSheet({ open, onClose }) {
                   placeholder="Category name"
                 />
               )}
+              <label htmlFor="sheet-notes">Note</label>
+              <textarea
+                id="sheet-notes"
+                aria-label="Note"
+                rows={3}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Optional — why you're saving this"
+              />
               {error && <p className="field-error" role="alert">{error}</p>}
               <p className="sheet-note">The page preview is fetched once and cached.</p>
               <button className="btn-primary" type="submit" disabled={saving}>

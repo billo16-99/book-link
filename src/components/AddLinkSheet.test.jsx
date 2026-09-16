@@ -51,6 +51,21 @@ describe('AddLinkSheet', () => {
       expect(addLinkMock).toHaveBeenCalledWith({
         url: 'https://example.com/article',
         categoryId: null,
+        notes: '',
+      }),
+    )
+  })
+
+  it('saves an optional note with the link', async () => {
+    setup()
+    await userEvent.type(screen.getByLabelText(/destination url/i), 'example.com/article')
+    await userEvent.type(screen.getByLabelText(/note/i), 'Read before Friday')
+    await userEvent.click(screen.getByRole('button', { name: /^save$/i }))
+    await waitFor(() =>
+      expect(addLinkMock).toHaveBeenCalledWith({
+        url: 'https://example.com/article',
+        categoryId: null,
+        notes: 'Read before Friday',
       }),
     )
   })
@@ -66,6 +81,7 @@ describe('AddLinkSheet', () => {
       expect(addLinkMock).toHaveBeenCalledWith({
         url: 'https://example.com/',
         categoryId: 'c9',
+        notes: '',
       }),
     )
   })
